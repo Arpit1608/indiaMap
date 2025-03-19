@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive India Map</title>
+    <style>
+       body { 
+    text-align: center; 
+    font-family: Arial, sans-serif; 
+    
+    margin: 0;
+    padding: 0;
+}
+
+h1 { 
+    color: #333; 
+    font-family: 'Brush Script MT', cursive;
+    font-size: 60px;
+}
+
+#map-container { 
+    position: relative; 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    width: 100vw;
+    height: 100vh;
+    margin-top: 200px;
+}
+
+
+
+
+path { 
+    fill: lightblue; 
+    stroke: black; 
+    stroke-width: 1; 
+    transition: fill 0.3s ease-in-out; 
+}
+
+path:hover { 
+    fill: orange; 
+    cursor: pointer; 
+}
+
+#tooltip {
+    position: absolute;
+    background: white;
+    padding: 5px 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: none;
+    pointer-events: none;
+    font-size: 14px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+object { 
+    width: 100%;  
+    max-width: 1000px; 
+    height: auto; 
+    filter: drop-shadow(4px 4px 6px rgba(68, 16, 16, 0.3));
+}
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+    <h1>Interactive India Map</h1>
+    <div id="map-container">
+        <div id="tooltip"></div>
+
+        <!-- Load the external SVG file -->
+        <object id="indiaMap" type="image/svg+xml" data="indiaMap.svg" width="700px" height="auto"></object>
+
+    </div>
+
+    <script>
+       document.getElementById("indiaMap").addEventListener("load", function () {
+    let svgDoc = this.contentDocument || this.getSVGDocument();
+
+    if (!svgDoc) {
+        console.error("Could not load SVG document.");
+        return;
+    }
+
+    let tooltip = document.getElementById('tooltip');
+
+    svgDoc.querySelectorAll('path').forEach((state) => {
+        state.style.fill = "lightblue"; 
+
+        state.addEventListener('mouseenter', (event) => {
+            let stateCode = event.target.id.replace("IN", "").toUpperCase();
+            let stateName = getStateName(stateCode);
+            tooltip.style.display = "block";
+            tooltip.innerHTML = stateName;  // Show full state name
+            event.target.style.fill = "orange"; 
+        });
+
+        state.addEventListener('mousemove', (event) => {
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY + 10 + 'px';
+        });
+
+        state.addEventListener('mouseleave', (event) => {
+            tooltip.style.display = "none";
+            event.target.style.fill = "lightblue"; 
+        });
+
+        state.addEventListener('click', function(event) {
+            let stateCode = event.target.id.replace("IN", "").toUpperCase();
+            let stateName = getStateName(stateCode); 
+            window.location.href = `disaster.html?state=${encodeURIComponent(stateName)}`;
+        });
+    });
+
+    function getStateName(code) {
+        const states = {
+    "AP": "Andhra Pradesh",
+    "AR": "Arunachal Pradesh",
+    "AS": "Assam",
+    "BR": "Bihar",
+    "CT": "Chhattisgarh",
+    "GA": "Goa",
+    "GJ": "Gujarat",
+    "HR": "Haryana",
+    "HP": "Himachal Pradesh",
+    "JH": "Jharkhand",
+    "KA": "Karnataka",
+    "KL": "Kerala",
+    "MP": "Madhya Pradesh",
+    "MH": "Maharashtra",
+    "MN": "Manipur",
+    "ML": "Meghalaya",
+    "MZ": "Mizoram",
+    "NL": "Nagaland",
+    "OD": "Odisha",
+    "PB": "Punjab",
+    "RJ": "Rajasthan",
+    "SK": "Sikkim",
+    "TN": "Tamil Nadu",
+    "TG": "Telangana",
+    "TR": "Tripura",
+    "UP": "Uttar Pradesh",
+    "UT": "Uttarakhand",
+    "WB": "West Bengal",
+    "AN": "Andaman & Nicobar Islands",
+    "CH": "Chandigarh",
+    "DN": "Dadra & Nagar Haveli",
+    "DD": "Daman & Diu",
+    "DL": "Delhi",
+    "JK": "Jammu & Kashmir",
+    "LA": "Ladakh",
+    "LD": "Lakshadweep",
+    "PY": "Puducherry"
+};
+
+        return states[code] || "Unknown State"; 
+    }
+});
+
+    </script>
+    
+
+</body>
+</html>
